@@ -4,9 +4,21 @@
       <q-card class="my-card card-size" v-for="book in allBooks" :key="book">
         <q-card-section>
           <q-img :src="book.cover" >
-            <p class="absolute-top-right avai-label">
-              {{states_dictionary[book.status]}}
-            </p>
+            <span v-if="book.status == 1">
+              <p class="absolute-top-right defau-label avai-label">
+                {{states_dictionary[book.status]}}
+              </p>
+            </span>
+            <span v-else-if="book.status == 2">
+              <p class="absolute-top-right defau-label notavai-label">
+                {{states_dictionary[book.status]}}
+              </p>
+            </span>
+             <span v-else>
+              <p class="absolute-top-right defau-label">
+                {{states_dictionary[book.status]}}
+              </p>
+            </span>
           </q-img>
         </q-card-section>
 
@@ -63,19 +75,26 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .card-size{
   width:100%;
   max-width: 250px;
 }
 
-.avai-label {
-  background-color: red;
-  color: #fff;
+.defau-label{
   padding: 5px 10px;
+  color: #fff;
   text-align: center;
   border-radius: 5px;
   margin: 5px;
   font-size: 0.7em;
+}
+.notavai-label {
+  background-color:red;
+}
+
+.avai-label {
+  background-color:rgb(43, 190, 23);
 }
 </style>
