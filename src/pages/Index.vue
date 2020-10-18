@@ -3,7 +3,11 @@
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="my-card card-size" v-for="book in allBooks" :key="book">
         <q-card-section>
-          <q-img :src="book.cover"  />
+          <q-img :src="book.cover" >
+            <p class="absolute-top-right avai-label">
+              {{states_dictionary[book.status]}}
+            </p>
+          </q-img>
         </q-card-section>
 
         <q-card-section>
@@ -12,7 +16,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          {{}}
+         {{}}
         </q-card-section>
 
         <q-card-actions>
@@ -33,7 +37,12 @@ export default {
     return {
       service: new BackendService(),
       allBooks: [],
-      books: []
+      books: [],
+      states_dictionary:{ 
+        1:"AVAILABLE", 
+        2:"UNAVAILABLE", 
+        3:"QUARANTINED"
+      }
     };
   },
   created() {
@@ -57,6 +66,16 @@ export default {
 <style scoped>
 .card-size{
   width:100%;
-  max-width: 500px;
+  max-width: 250px;
+}
+
+.avai-label {
+  background-color: red;
+  color: #fff;
+  padding: 5px 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 5px;
+  font-size: 0.7em;
 }
 </style>
