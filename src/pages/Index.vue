@@ -22,6 +22,17 @@
           <div class="text-subtitle2">{{book.author}}</div>
         </q-card-section>
 
+        <q-expansion-item>
+          <template v-slot:header>
+            <q-item-section class="text-weight-bold">
+              About
+            </q-item-section>
+          </template>
+          <q-card-section>
+            <div class="text-caption">{{book.description}}</div>
+          </q-card-section>
+        </q-expansion-item>
+
         <q-card-actions>
           <div v-if="book.status == 1">
             <q-btn color="secondary" icon-right="event" label="Reserve"  @click="reserve = true" />
