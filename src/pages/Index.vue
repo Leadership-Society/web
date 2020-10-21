@@ -25,37 +25,37 @@
         <q-card-actions>
           <div v-if="book.status == 1">
             <q-btn color="secondary" icon-right="event" label="Reserve"  @click="reserve = true" />
-              <q-dialog v-model="reserve" persistent>
-                <q-card style="min-width: 350px">
-                  <q-card-section>
-                    <div class="text-h6">Reservation Request</div>
-                    <div class = "text-h7">{{book.title}}</div>
-                  </q-card-section>
-                  <q-card-section>
-                    <div class="text-h7">Fill out the following form to submit your request</div>
-                  </q-card-section>
-                  <q-card-section class="q-pt-none">
-                    <q-input filled v-model="forename" label="Forename*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                  </q-card-section>
-                   <q-card-section class="q-pt-none">
-                    <q-input filled v-model="surname" label="Surname*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                  </q-card-section>
-                   <q-card-section class="q-pt-none">
-                    <q-input filled v-model="studentNumber" label="Student Number*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                  </q-card-section>
+            <q-dialog v-model="reserve" persistent>
+              <q-card style="min-width: 350px">
                 <q-card-section>
-                <div class = "text-h6">Preferred Collection Method</div>
-                <div class="q-gutter-sm">
-                  <q-radio dense v-model="collection" val="Pick up" label="Pick up" />
-                  <q-radio dense v-model="collection" val="Delivery" label="Delivery" />
-                </div>
+                  <div class="text-h6">Reservation Request</div>
+                  <div class = "text-h7">{{book.title}}</div>
                 </q-card-section>
-                  <q-card-actions align="right" class="text-primary">
-                    <q-btn flat label="Cancel" v-close-popup />
-                    <q-btn flat label="Next" v-close-popup type="next"/>
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
+                <q-card-section>
+                  <div class="text-h7">Fill out the following form to submit your request</div>
+                </q-card-section>
+                <q-card-section class="q-pt-none">
+                  <q-input filled v-model="forename" label="Forename*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
+                </q-card-section>
+                  <q-card-section class="q-pt-none">
+                  <q-input filled v-model="surname" label="Surname*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
+                </q-card-section>
+                  <q-card-section class="q-pt-none">
+                  <q-input filled v-model="studentNumber" label="Student Number*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
+                </q-card-section>
+              <q-card-section>
+              <div class = "text-h6">Preferred Collection Method</div>
+              <div class="q-gutter-sm">
+                <q-radio dense v-model="collection" val="Pick up" label="Pick up" />
+                <q-radio dense v-model="collection" val="Delivery" label="Delivery" />
+              </div>
+              </q-card-section>
+                <q-card-actions align="right" class="text-primary">
+                  <q-btn flat label="Cancel" v-close-popup />
+                  <q-btn flat label="Next" v-close-popup type="next"/>
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
           </div>
           <div v-else>
             <q-btn color="red" icon-right="send"  label="Notify" @click="notify = true"/>
