@@ -277,7 +277,19 @@ export default {
       this.step = 1;
     },
     submitDetails(details) {
-      
+      var service = new BackendService();
+      service.submitDetails(details)
+        .then((res) => {
+          if (res) {
+            if (res.success) {
+              this.cancel();
+              this.$q.notify('Your reservation has been made!');
+            } else {
+              this.cancel();
+              this.$q.notify('There was an error submitting your reservation, please contact leadershipncl@gmail.com');
+            }
+          }
+        })
     }
   }
 }
