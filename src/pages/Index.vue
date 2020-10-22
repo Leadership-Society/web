@@ -4,16 +4,9 @@
       <q-card class="my-card card-size" v-for="book in allBooks" :key="book">
         <q-card-section>
           <q-img :src="book.cover" >
-            <span v-if="book.status == 1">
-              <p class="absolute-top-right defau-label avai-label">
-                {{states_dictionary[book.status]}}
-              </p>
-            </span>
-            <span v-else>
-              <p class="absolute-top-right defau-label notavai-label">
-                {{states_dictionary[book.status]}}
-              </p>
-            </span>
+            <p class="absolute-top-right defau-label" :class="{ 'avai-label' : book.status == 1, 'notavai-label' : book.status == 2 }">
+              {{states_dictionary[book.status]}}
+            </p>
           </q-img>
         </q-card-section>
 
