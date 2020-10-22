@@ -28,7 +28,7 @@
 
         <q-card-actions>
           <div v-if="book.status == 1">
-            <q-btn color="secondary" icon-right="event" label="Reserve" @click="openForm($event, book)" />
+            <q-btn unelevated color="secondary" icon-right="event" label="Reserve" @click="openForm($event, book)" />
           </div>
         </q-card-actions>
       </q-card>
@@ -230,7 +230,12 @@ export default {
           this.$refs.stepper.next();
         }
       } else {
-        console.log("submit");
+        var detailsToSubmit = {
+          studentNumber: this.formDetails.studentNumber,
+          bookId: this.selectedBook._id,
+          deliveryAddress: this.formDetails.address
+        }
+        this.submitDetails(detailsToSubmit);
       }
     },
     openForm(ev, book) {
@@ -270,6 +275,9 @@ export default {
       this.error = false;
       this.selectedBook = {};
       this.step = 1;
+    },
+    submitDetails(details) {
+      
     }
   }
 }
