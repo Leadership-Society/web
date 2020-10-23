@@ -306,6 +306,7 @@ export default {
       this.error = false;
       this.selectedBook = {};
       this.step = 1;
+      this.termsAndConditionsAccepted = false;
     },
     submitDetails(details) {
       var service = new BackendService();
