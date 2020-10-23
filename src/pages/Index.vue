@@ -1,19 +1,12 @@
 <template>
   <q-page class="flex flex-center">
     <div class="q-pa-md row items-start q-gutter-md">
-      <q-card class="my-card card-size" v-for="book in allBooks" :key="book">
+      <q-card class="my-card card-size" v-for="book in allBooks" :key="book._id">
         <q-card-section>
-          <q-img :src="book.cover" >
-            <span v-if="book.status == 1">
-              <p class="absolute-top-right defau-label avai-label">
-                {{states_dictionary[book.status]}}
-              </p>
-            </span>
-            <span v-else>
-              <p class="absolute-top-right defau-label notavai-label">
-                {{states_dictionary[book.status]}}
-              </p>
-            </span>
+          <q-img :src="book.cover">
+            <p class="absolute-top-right defau-label" :class="{ 'avai-label' : book.status == 1, 'notavai-label' : book.status == 2 }">
+              {{states_dictionary[book.status]}}
+            </p>
           </q-img>
         </q-card-section>
 
@@ -35,86 +28,201 @@
 
         <q-card-actions>
           <div v-if="book.status == 1">
-            <q-btn color="secondary" icon-right="event" label="Reserve"  @click="reserve = true" />
-            <q-dialog v-model="reserve" persistent>
-              <q-card style="min-width: 350px">
-                <q-card-section>
-                  <div class="text-h6">Reservation Request</div>
-                  <div class = "text-h7">{{book.title}}</div>
-                </q-card-section>
-                <q-card-section>
-                  <div class="text-h7">Fill out the following form to submit your request</div>
-                </q-card-section>
-                <q-card-section class="q-pt-none">
-                  <q-input filled v-model="forename" label="Forename*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                </q-card-section>
-                  <q-card-section class="q-pt-none">
-                  <q-input filled v-model="surname" label="Surname*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                </q-card-section>
-                  <q-card-section class="q-pt-none">
-                  <q-input filled v-model="studentNumber" label="Student Number*" stack-label :dense="dense" :rules="[val => !!val || 'Field is required']" />
-                </q-card-section>
-              <q-card-section>
-              <div class = "text-h6">Preferred Collection Method</div>
-              <div class="q-gutter-sm">
-                <q-radio dense v-model="collection" val="Pick up" label="Pick up" />
-                <q-radio dense v-model="collection" val="Delivery" label="Delivery" />
-              </div>
-              </q-card-section>
-                <q-card-actions align="right" class="text-primary">
-                  <q-btn flat label="Cancel" v-close-popup />
-                  <q-btn flat label="Next" v-close-popup type="next"/>
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </div>
-          <div v-else>
-            <q-btn color="red" icon-right="send"  label="Notify" @click="notify = true"/>
-            <q-dialog v-model="notify" persistent>
-                <q-card style="min-width: 350px">
-                  <q-card-section>
-                    <div class="text-h6">{{book.title}} is not currently in the library. Enter your email to be notified when it is available:</div>
-                  </q-card-section>
-
-                  <q-card-section class="q-pt-none">
-                    <q-input dense v-model="email" autofocus @keyup.enter="prompt = false" />
-                  </q-card-section>
-
-                  <q-card-actions align="right" class="text-primary">
-                    <q-btn flat label="Cancel" v-close-popup />
-                    <q-btn flat label="Submit" v-close-popup />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
+            <q-btn unelevated color="secondary" icon-right="event" label="Reserve" @click="openForm($event, book)" />
           </div>
         </q-card-actions>
       </q-card>
+
+      <q-dialog v-model="openDialog" persistent>
+        <q-stepper v-model="step" animated ref="stepper">
+          <!-- Enter your details -->
+          <q-step :name="1" title="Your Details" :done="step > 1">
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div class="text-h4">Reservation Request</div>
+              <div class = "text-h5">{{selectedBook.title}}</div>
+            </q-card-section>
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div class="text-h5">Enter Your Details</div>
+            </q-card-section>
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <q-form class="q-gutter-sm">
+                <q-input filled 
+                  ref="studentNumber" v-model="formDetails.studentNumber"
+                  label="Student Number*" stack-label :dense="dense"
+                  :rules="[val => !!val || 'Field is required']" lazy-rules />
+                <div class="text-h6">
+                    Preferred Delivery Method
+                    <q-icon name="help">
+                      <q-tooltip anchor="center right" self="center left">
+                        <p class="caption q-mb-xs">How you would like to receive your book.</p>
+                        <p class="caption q-mb-xs">Pickup: Collect your book from a member of the committee in a public location</p>
+                        <p class="caption q-mb-xs">Delivery: The book will be hand-delivered to your accommodation</p>
+                      </q-tooltip>
+                    </q-icon>
+                </div>
+                <q-radio dense v-model="formDetails.collectionMethod" val="pickup" label="Pick up" />
+                <q-radio dense v-model="formDetails.collectionMethod" val="delivery" label="Delivery" />
+              </q-form>
+            </q-card-section>
+          </q-step>
+
+          <!-- Delivery details -->
+          <q-step :name="2" title="Delivery Details" :done="step > 2" :disable="formDetails.collectionMethod == 'pickup'">
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div class="text-h4">Delivery</div>
+            </q-card-section>
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div class="text-h5">Enter Your Address</div>
+            </q-card-section>
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <q-form class="q-gutter-xs">
+                <q-input filled dense
+                  ref="line1" v-model="formDetails.address.line1"
+                  label="Line 1*" stack-label :rules="[val => !!val || 'Field is required']" />
+
+                <q-input filled dense
+                  ref="line2" v-model="formDetails.address.line2"
+                  label="Line 2" stack-label :rules="[null || '']" />
+
+                <q-input filled dense
+                  ref="postcode" v-model="formDetails.address.postcode"
+                  label="Postcode*" stack-label :rules="[val => !!val || 'Field is required']" />
+
+                <q-input filled dense prefix="+44" mask="##########"
+                  ref="phone" v-model="formDetails.address.phoneNumber" type="tel"
+                  label="Phone Number*" stack-label :rules="[val => !!val || 'Field is required']" />
+                  
+                <q-input filled dense
+                  ref="note" v-model="formDetails.deliveryNote"
+                  label="Delivery Notes" stack-label type="textarea" />
+              </q-form>
+            </q-card-section>
+          </q-step>
+
+          <!-- Confirm -->
+          <q-step :name="3" title="Confirm Details">
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div class="text-h4">Confirm Your Details</div>
+            </q-card-section>
+            <q-card-section>
+                <p class="text-h5">Your Book</p>
+                <p>{{selectedBook.title}}</p>
+                <q-img :src="selectedBook.cover" style="width: 100%; max-width: 200px"/>
+            </q-card-section>
+            <q-separator />
+            <q-card-section style="margin-top:5px; padding:5px 10px">
+              <div v-if="formDetails.collectionMethod == 'pickup'">
+                <div style="margin:14px;padding:5px;">
+                  <p class="text-h5">Your Details</p>
+                  <p class="caption q-mb-sm">Your Student Number: {{ formDetails.studentNumber }}</p>
+                  <p class="caption q-mb-sm">Delivery Method: Pickup</p>
+                </div>
+                <q-separator />
+                <div style="margin:14px;padding:5px;">
+                  <p class="caption q-mb-sm">
+                    We don't need any more details from you. Once you submit your request,
+                    we will contact you using your university email and arrange a date, time,
+                    and location for you to pick up your book.
+                  </p>
+                  <p class="caption q-mb-sm">
+                    We will also include details on how to return the book once you are finished
+                    with it.
+                  </p>
+                </div>
+              </div>
+              <div v-if="formDetails.collectionMethod == 'delivery'">
+                <div style="margin:14px;padding:5px;">
+                  <p class="text-h5">Your Details</p>
+                  <p class="caption q-mb-sm">Your Student Number: {{ formDetails.studentNumber }}</p>
+                  <p class="caption q-mb-sm">Delivery Method: Delivery</p>
+                  <p class="caption q-mb-sm">Line 1: {{ formDetails.address.line1 }}</p>
+                  <p class="caption q-mb-sm" v-if="formDetails.address.line2">Line 2: {{ formDetails.address.line2 }}</p>
+                  <p class="caption q-mb-sm">Postcode: {{ formDetails.address.postcode }}</p>
+                  <p class="caption q-mb-sm">Phone Number: {{ formDetails.phoneNumber }}</p>
+                  <div v-if="formDetails.deliveryNote">
+                    <p class="caption q-mb-sm">Delivery Notes:</p>
+                    <p class="caption q-mb-sm">{{ formDetails.deliveryNote }}</p>
+                  </div>
+                </div>
+                <q-separator />
+                <div style="margin:14px;padding:5px;">
+                  <p class="caption q-mb-sm">
+                    Once we process your request, we will let you know when your book will
+                    be delivered via your university email. If there are any issues, please
+                    contact us at <a href="mailto:leadershipncl@gmail.com">leadershipncl@gmail.com</a>
+                  </p>
+                  <p class="caption q-mb-sm">
+                    We will also include details on how to return the book once you are finished
+                    with it.
+                  </p>
+                </div>
+              </div>
+            </q-card-section>
+            <q-separator />
+            <q-card-section>
+              <p class="text-h5">Terms and Conditions</p>
+              <p>Read our Terms and Conditions here: <span @click="openURL('http://bit.ly/LLTermsAndConditions')">http://bit.ly/LLTermsAndConditions</span></p>
+              <p class="caption q-mb-sm">
+                If you wish to go forward with your reservation, please read and agree to the Terms and Conditions above.
+                It covers the rules for borrowing books from the Leadership Library, and details about how we
+                store and manage any data we collect about you. If you have any questions or issues about our Terms and
+                Conditions, then please contact us at <a href="mailto:leadershipncl@gmail.com">leadershipncl@gmail.com</a>.
+              </p>
+              <q-checkbox label="I've read and accepted the Terms and Conditions" v-model="termsAndConditionsAccepted" />
+            </q-card-section>
+          </q-step>
+
+          <template v-slot:navigation>
+            <q-stepper-navigation class="row">
+              <div class="col-6">
+                <q-btn unelevated @click="cancel" color="grey-7" label="Cancel" class="q-ma-sm" />
+              </div>
+              <div class="col-6 row justify-end">
+                <q-btn flat v-if="step > 1" color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ma-sm col-auto" />
+                <q-btn unelevated @click="onNext" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" class="q-ma-sm col-auto" :disable="finishDisabled" />
+              </div>
+            </q-stepper-navigation>
+          </template>
+        </q-stepper>
+      </q-dialog>
     </div>
   </q-page>
 </template>
 
 <script>
 import BackendService from "../BackendService";
+import { openURL } from 'quasar'
+
 export default {
   name: 'PageIndex',
   data(){
     return {
-      notify: false,
-      reserve: false,
-      //validDetails: false,
-      email: '',
-      forename: '',
-      surname: '',
-      collection: '',
+      formDetails: {
+        email: '',
+        studentNumber: '',
+        collectionMethod: '', // either 'pickup' or 'delivery'
+        address: {
+          line1: '',
+          line2: '',
+          postcode: ''
+        },
+        deliveryNote: '',
+        phoneNumber: ''
+      },
       dense: false,
-      studentNumber: '',
       service: new BackendService(),
       allBooks: [],
       books: [],
-      states_dictionary:{ 
-        1:"AVAILABLE", 
-        2:"UNAVAILABLE"
-      }
+      states_dictionary: { 
+        1: "AVAILABLE", 
+        2: "UNAVAILABLE"
+      },
+      selectedBook: {},
+      openDialog: false,
+      termsAndConditionsAccepted: false,
+      step: 1,
+      error: false,
+      openURL: openURL
     };
   },
   created() {
@@ -135,25 +243,92 @@ export default {
   },
   methods: {
     onNext () {
-      this.$refs.forename.validate()
-      this.$refs.email.validate()
+      if (this.step == 1) {
+        this.validateDetails();
+        if (!this.error) {
+          if (this.formDetails.collectionMethod == 'pickup') {
+            this.$refs.stepper.goTo(3);
+          } else if (this.formDetails.collectionMethod == 'delivery') {
+            this.$refs.stepper.next();
+          }
+        }
+      } else if (this.step == 2) {
+        this.validateDeliveryDetails();
+        console.log("HEY! this.error is " + this.error);
+        if (!this.error) {
+          console.log("HEY")
+          this.$refs.stepper.next();
+        }
+      } else {
+        var detailsToSubmit = {
+          studentNumber: this.formDetails.studentNumber,
+          deliveryType: this.formDetails.collectionMethod,
+          bookId: this.selectedBook._id
+        }
 
-      if (this.$refs.name.hasError || this.$refs.age.hasError) {
-        this.formHasError = true
+        if (detailsToSubmit.deliveryType == 'delivery') {
+          detailsToSubmit.deliveryAddress = this.formDetails.address;
+          detailsToSubmit.phoneNumber = this.formDetails.phoneNumber;
+        }
+
+        this.submitDetails(detailsToSubmit);
       }
-      else if (this.accept !== true) {
-        this.$q.notify({
-          color: 'negative',
-          message: 'You need to accept the license and terms first'
+    },
+    openForm(ev, book) {
+      this.selectedBook = book;
+      this.openDialog = true;
+    },
+    validateDetails() {
+      this.$refs.studentNumber.validate();
+      this.error = this.$refs.studentNumber.hasError;
+    },
+    validateDeliveryDetails() {
+      this.$refs.line1.validate();
+      this.$refs.postcode.validate();
+      this.$refs.phone.validate();
+
+      this.error = this.$refs.line1.hasError || this.$refs.postcode.hasError || this.$refs.phone.hasError;
+    },
+    cancel() {
+      this.formDetails = {
+        email: '',
+        studentNumber: '',
+        collectionMethod: '',
+        address: {
+          line1: '',
+          line2: '',
+          postcode: ''
+        },
+        deliveryNote: '',
+        phoneNumber: ''
+      };
+      this.openDialog = false;
+      this.error = false;
+      this.selectedBook = {};
+      this.step = 1;
+    },
+    submitDetails(details) {
+      var service = new BackendService();
+      service.submitDetails(details)
+        .then((res) => {
+          if (res) {
+            if (res.success) {
+              this.cancel();
+              this.$q.notify('Your request has been submitted! A member of our committee will be in touch soon.');
+            } else {
+              this.cancel();
+              this.$q.notify('There was an error submitting your request, please contact leadershipncl@gmail.com');
+            }
+          }
         })
-      }
-      else {
-        this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Submitted'
-        })
-      }
+    },
+    openNewTab(link) {
+      this.openURL(link);
+    }
+  },
+  computed: {
+    finishDisabled: function () {
+      return this.step == 3 && !this.termsAndConditionsAccepted;
     }
   }
 }
@@ -179,5 +354,9 @@ export default {
 
 .avai-label {
   background-color:rgb(43, 190, 23);
+}
+
+.link {
+  text-decoration: underline;
 }
 </style>
