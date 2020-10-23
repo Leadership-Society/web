@@ -18,7 +18,7 @@ export default class BackendService {
     }
 
     async submitDetails(details) {
-        return axios.post(`${API}/reservations`)
+        return axios.post(`${API}/reservations`, details)
             .then((res) => {
                 if (res) {
                     return { success: true };
