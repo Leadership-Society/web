@@ -245,7 +245,6 @@ export default {
       }
     },
     openForm(ev, book) {
-      console.log(book);
       this.selectedBook = book;
       this.openDialog = true;
     },
