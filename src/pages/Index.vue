@@ -232,9 +232,15 @@ export default {
       } else {
         var detailsToSubmit = {
           studentNumber: this.formDetails.studentNumber,
-          bookId: this.selectedBook._id,
-          deliveryAddress: this.formDetails.address
+          deliveryType: this.formDetails.collectionMethod,
+          bookId: this.selectedBook._id
         }
+
+        if (detailsToSubmit.deliveryType == 'delivery') {
+          detailsToSubmit.deliveryAddress = this.formDetails.address;
+          detailsToSubmit.phoneNumber = this.formDetails.phoneNumber;
+        }
+
         this.submitDetails(detailsToSubmit);
       }
     },
