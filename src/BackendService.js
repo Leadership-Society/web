@@ -1,6 +1,7 @@
 import axios from "axios";
 const API = "https://leadership-library.herokuapp.com/api"; //+ books
 var _ = require('lodash');
+import { Loading } from 'quasar';
 
 export default class BackendService {
     async getAllBooks() {
@@ -18,14 +19,17 @@ export default class BackendService {
     }
 
     async submitDetails(details) {
+        Loading.show();
         return axios.post(`${API}/reservations`, details)
             .then((res) => {
                 if (res) {
+                    Loading.hide();
                     return { success: true };
                 }
             })
             .catch((err) => {
                 if (err) {
+                    Loading.hide();
                     return { success: false, message: err.message }
                 }
             })
