@@ -161,7 +161,7 @@
             <q-separator />
             <q-card-section>
               <p class="text-h5">Terms and Conditions</p>
-              <p>Read our Terms and Conditions here: <a href="http://bit.ly/LLTermsAndConditions">http://bit.ly/LLTermsAndConditions</a></p>
+              <p>Read our Terms and Conditions here: <span @click="openURL('http://bit.ly/LLTermsAndConditions')">http://bit.ly/LLTermsAndConditions</span></p>
               <p class="caption q-mb-sm">
                 If you wish to go forward with your reservation, please read and agree to the Terms and Conditions above.
                 It covers the rules for borrowing books from the Leadership Library, and details about how we
@@ -191,6 +191,8 @@
 
 <script>
 import BackendService from "../BackendService";
+import { openURL } from 'quasar'
+
 export default {
   name: 'PageIndex',
   data(){
@@ -219,7 +221,8 @@ export default {
       openDialog: false,
       termsAndConditionsAccepted: false,
       step: 1,
-      error: false
+      error: false,
+      openURL: openURL
     };
   },
   created() {
@@ -320,6 +323,9 @@ export default {
             }
           }
         })
+    },
+    openNewTab(link) {
+      this.openURL(link);
     }
   },
   computed: {
