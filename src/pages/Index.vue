@@ -107,7 +107,7 @@
           </q-step>
 
           <!-- Confirm -->
-          <q-step :name="3" title="Confirm Details" ref="stepper">
+          <q-step :name="3" title="Confirm Details">
             <q-card-section style="margin-top:5px; padding:5px 10px">
               <div class="text-h4">Confirm Your Details</div>
             </q-card-section>
