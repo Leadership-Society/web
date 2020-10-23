@@ -145,6 +145,18 @@
                 </div>
               </div>
             </q-card-section>
+            <q-separator />
+            <q-card-section>
+              <p class="text-h5">Terms and Conditions</p>
+              <p>Read our Terms and Conditions here: <a href="http://bit.ly/LLTermsAndConditions">http://bit.ly/LLTermsAndConditions</a></p>
+              <p class="caption q-mb-sm">
+                If you wish to go forward with your reservation, please read and agree to the Terms and Conditions above.
+                It covers the rules for borrowing books from the Leadership Library, and details about how we
+                store and manage any data we collect about you. If you have any questions or issues about our Terms and
+                Conditions, then please contact us at <a href="mailto:leadershipncl@gmail.com">leadershipncl@gmail.com</a>.
+              </p>
+              <q-checkbox label="I've read and accepted the Terms and Conditions" v-model="termsAndConditionsAccepted" />
+            </q-card-section>
           </q-step>
 
           <template v-slot:navigation>
@@ -154,7 +166,7 @@
               </div>
               <div class="col-6 row justify-end">
                 <q-btn flat v-if="step > 1" color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ma-sm col-auto" />
-                <q-btn unelevated @click="onNext" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" class="q-ma-sm col-auto" />
+                <q-btn unelevated @click="onNext" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" class="q-ma-sm col-auto" :disable="finishDisabled" />
               </div>
             </q-stepper-navigation>
           </template>
@@ -192,7 +204,7 @@ export default {
       },
       selectedBook: {},
       openDialog: false,
-      accept: false,
+      termsAndConditionsAccepted: false,
       step: 1,
       error: false
     };
@@ -295,6 +307,11 @@ export default {
             }
           }
         })
+    }
+  },
+  computed: {
+    finishDisabled: function () {
+      return this.step == 3 && !this.termsAndConditionsAccepted;
     }
   }
 }
