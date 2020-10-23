@@ -175,7 +175,7 @@
           <template v-slot:navigation>
             <q-stepper-navigation class="row">
               <div class="col-6">
-                <q-btn unelevated @click="cancel" color="warning" label="Cancel" class="q-ma-sm" />
+                <q-btn unelevated @click="cancel" color="grey-7" label="Cancel" class="q-ma-sm" />
               </div>
               <div class="col-6 row justify-end">
                 <q-btn flat v-if="step > 1" color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ma-sm col-auto" />
