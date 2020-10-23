@@ -253,8 +253,10 @@ export default {
           }
         }
       } else if (this.step == 2) {
-        this.validateDeliveryDetails()
+        this.validateDeliveryDetails();
+        console.log("HEY! this.error is " + this.error);
         if (!this.error) {
+          console.log("HEY")
           this.$refs.stepper.next();
         }
       } else {
@@ -278,18 +280,14 @@ export default {
     },
     validateDetails() {
       this.$refs.studentNumber.validate();
-      if (this.$refs.studentNumber.hasError) {
-        this.formDetails.error = true;
-      }
+      this.error = this.$refs.studentNumber.hasError;
     },
     validateDeliveryDetails() {
       this.$refs.line1.validate();
       this.$refs.postcode.validate();
       this.$refs.phone.validate();
 
-      if (this.$refs.line1.hasError || this.$refs.postcode.hasError || this.$refs.phone.hasError) {
-        this.error = true;
-      }
+      this.error = this.$refs.line1.hasError || this.$refs.postcode.hasError || this.$refs.phone.hasError;
     },
     cancel() {
       this.formDetails = {
