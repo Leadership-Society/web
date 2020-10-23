@@ -79,15 +79,19 @@
                 <q-input filled dense
                   ref="line1" v-model="formDetails.address.line1"
                   label="Line 1*" stack-label :rules="[val => !!val || 'Field is required']" />
+
                 <q-input filled dense
                   ref="line2" v-model="formDetails.address.line2"
                   label="Line 2" stack-label :rules="[null || '']" />
+
                 <q-input filled dense
                   ref="postcode" v-model="formDetails.address.postcode"
                   label="Postcode*" stack-label :rules="[val => !!val || 'Field is required']" />
+
                 <q-input filled dense prefix="+44" mask="##########"
                   ref="phone" v-model="formDetails.address.phoneNumber" type="tel"
                   label="Phone Number*" stack-label :rules="[val => !!val || 'Field is required']" />
+                  
                 <q-input filled dense
                   ref="note" v-model="formDetails.deliveryNote"
                   label="Delivery Notes" stack-label type="textarea" />
