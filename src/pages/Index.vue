@@ -314,10 +314,10 @@ export default {
           if (res) {
             if (res.success) {
               this.cancel();
-              this.$q.notify('Your reservation has been made!');
+              this.$q.notify('Your request has been submitted! A member of our committee will be in touch soon.');
             } else {
               this.cancel();
-              this.$q.notify('There was an error submitting your reservation, please contact leadershipncl@gmail.com');
+              this.$q.notify('There was an error submitting your request, please contact leadershipncl@gmail.com');
             }
           }
         })
