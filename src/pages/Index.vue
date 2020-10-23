@@ -50,7 +50,16 @@
                   ref="studentNumber" v-model="formDetails.studentNumber"
                   label="Student Number*" stack-label :dense="dense"
                   :rules="[val => !!val || 'Field is required']" lazy-rules />
-                <p class="text-h6">Preferred Delivery Method</p>
+                <div class="text-h6">
+                    Preferred Delivery Method
+                    <q-icon name="help">
+                      <q-tooltip anchor="center right" self="center left">
+                        <p class="caption q-mb-xs">How you would like to receive your book.</p>
+                        <p class="caption q-mb-xs">Pickup: Collect your book from a member of the committee in a public location</p>
+                        <p class="caption q-mb-xs">Delivery: The book will be hand-delivered to your accommodation</p>
+                      </q-tooltip>
+                    </q-icon>
+                </div>
                 <q-radio dense v-model="formDetails.collectionMethod" val="pickup" label="Pick up" />
                 <q-radio dense v-model="formDetails.collectionMethod" val="delivery" label="Delivery" />
               </q-form>
