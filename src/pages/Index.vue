@@ -226,20 +226,7 @@ export default {
     };
   },
   created() {
-    var service = new BackendService();
-
-    service.getAllBooks()
-      .then((res) => {
-        if (res) {
-          this.allBooks = res;
-          this.books = Array.from(this.allBooks);
-        } 
-      })
-      .catch((err) => {
-        if (err) {
-          alert(err.message);
-          }
-      })
+    this.refreshBooks();
   },
   methods: {
     onNext () {
@@ -273,6 +260,22 @@ export default {
 
         this.submitDetails(detailsToSubmit);
       }
+    },
+    refreshBooks () {
+      var service = new BackendService();
+
+      service.getAllBooks()
+        .then((res) => {
+          if (res) {
+            this.allBooks = res;
+            this.books = Array.from(this.allBooks);
+          } 
+        })
+        .catch((err) => {
+          if (err) {
+            alert(err.message);
+            }
+        })
     },
     openForm(ev, book) {
       this.selectedBook = book;
@@ -314,6 +317,7 @@ export default {
         .then((res) => {
           if (res) {
             if (res.success) {
+              this.refreshBooks();
               this.cancel();
               this.$q.notify('Your request has been submitted! A member of our committee will be in touch soon.');
             } else {
