@@ -45,11 +45,18 @@
           </q-card-section>
         </q-expansion-item>
 
+
         <q-card-actions>
           <div v-if="book.status == 1">
             <q-btn unelevated color="secondary" icon-right="event" label="Reserve" @click="openForm($event, book)" />
           </div>
         </q-card-actions>
+        <q-card-actions>
+          <div v-if="book.status == 2">
+            <q-btn unelevated color="red" icon-right="send" label="Notify" @click="notifyMe($event, book)" />
+          </div>
+        </q-card-actions>
+
       </q-card>
 
       <q-dialog v-model="openDialog" persistent>
@@ -245,20 +252,7 @@ export default {
     };
   },
   created() {
-    var service = new BackendService();
-
-    service.getAllBooks()
-      .then((res) => {
-        if (res) {
-          this.allBooks = res;
-          this.books = Array.from(this.allBooks);
-        } 
-      })
-      .catch((err) => {
-        if (err) {
-          alert(err.message);
-          }
-      })
+    this.refreshBooks();
   },
   methods: {
     onNext () {
@@ -293,9 +287,29 @@ export default {
         this.submitDetails(detailsToSubmit);
       }
     },
+    refreshBooks () {
+      var service = new BackendService();
+
+      service.getAllBooks()
+        .then((res) => {
+          if (res) {
+            this.allBooks = res;
+            this.books = Array.from(this.allBooks);
+          } 
+        })
+        .catch((err) => {
+          if (err) {
+            alert(err.message);
+            }
+        })
+    },
     openForm(ev, book) {
       this.selectedBook = book;
       this.openDialog = true;
+    },
+    notifyMe(ev,book){
+      this.selectedBook = book;
+      window.open('mailto:leadershipncl@gmail.com?subject=Add Me to the Waiting List For: ' + this.selectedBook.title + "&body=Please let me know when it's available again");
     },
     validateDetails() {
       this.$refs.studentNumber.validate();
@@ -325,6 +339,7 @@ export default {
       this.error = false;
       this.selectedBook = {};
       this.step = 1;
+      this.termsAndConditionsAccepted = false;
     },
     submitDetails(details) {
       var service = new BackendService();
@@ -332,8 +347,9 @@ export default {
         .then((res) => {
           if (res) {
             if (res.success) {
+              this.refreshBooks();
               this.cancel();
-              this.$q.notify('Your request has been submitted! A member of our committee will be in touch soon.');
+              this.$q.notify("Your request has been submitted! By default, you reservation has been made. A member of our committee will be in touch soon.");
             } else {
               this.cancel();
               this.$q.notify('There was an error submitting your request, please contact leadershipncl@gmail.com');
