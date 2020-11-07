@@ -1,5 +1,24 @@
 <template>
   <q-page class="flex flex-center">
+    <q-card class="q-ma-md q-pa-md bg-warning">
+      <q-card-section>
+       <div class="text-h3 text-center">COVID-19 Impact</div>
+      </q-card-section>
+      <q-card-section>
+        Due to the ongoing COVID-19 pandemic, we will be reopening the Leadership Library with some changes.
+
+        Despite the CDC not considering paper a high risk format for transferring the virus, we will still be introducing extra preventative safety measures, such as:
+
+        <ul>
+          <li>Returned books will be quarantined for 48 hours</li>
+          <li>Book disinfection upon return to library</li>
+        </ul>
+        
+        We have also changed the process for collecting books, so you can either have the book delivered to your address or you can choose to collect your book from a member of our committee in a public place.
+
+        Please note that due to these measures, we can only offer this service to our members that are currently in Newcastle.
+      </q-card-section>
+    </q-card>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="my-card card-size" v-for="book in allBooks" :key="book._id">
         <q-card-section>
